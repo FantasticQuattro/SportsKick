@@ -9,7 +9,36 @@
         <link href="css/style.css" rel="stylesheet" type="text/css"/>
 
 <style>
-.button {align-self: center; color: coral; background-color: floralwhite; align-content: center; font-weight: bold}
+.button {
+    color: #494949  !important;
+    text-transform: uppercase;
+    background: #ffffff;
+    padding: 15px;
+    border: 2px solid #494949  !important;
+    border-radius: 2px;
+    display: inline-block;
+    }
+.button:hover {
+    color: #20bf6b !important;
+    border-radius: 15px;
+    border-color: #20bf6b !important;
+    transition: all 0.3s ease 0s;
+    }
+p{    
+   
+    font-family: 'Nunito';
+    font-size: 15px;
+    font-weight: 400;
+    padding: 10px 10px;
+}
+h4{    
+    
+    font-family: 'Nunito';
+    font-size: 21px;
+    font-weight: 400;
+    padding: 5px;
+}
+    
 </style>
 
 </head> 
@@ -127,11 +156,11 @@ if(isset($_POST["action"]))
       {
        $distance = getDistance($row['Latitude'],$row['Longitude']);
        $output .= '   
-       <div class="col-md-6">
-        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px;">
+       <div class="col-md-6 col-md-6">
+        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:450px;">
 
          <h4 align="center" style="color:MediumSeaGreen;"><strong>'. $row['Name'] .'</strong></h4>
-         <br />
+       
          <p>
          <b>Type :</b> <br />'. $row['Type'] .' <br /><br />
          <b>Category :</b> <br />'. $row['Category'] .' <br /><br />
@@ -139,7 +168,7 @@ if(isset($_POST["action"]))
          
          <b>Distance :</b> <br /> 
           <font color="green">'. $distance .' KM </font>
-         <br />
+         <br /><br />
 
          <form method="post" action="detailPage.php">
          <input type="hidden" name="Type" value="'. $row['Type'] .'">

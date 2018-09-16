@@ -131,8 +131,8 @@ h4 {
             <br />
             <!--         <h3 align="center" color=green>Places Near You</h3>-->
             <br />
-            <div class="col-md-3">
-                <br /><br /><br /><br /><br />
+            <div class="col-sm-3">
+                <br /><br />
                 <div class="list-group">
                     <h4>Category</h4>
                     <div style="height: 180px; overflow-y: auto; overflow-x: hidden;">
