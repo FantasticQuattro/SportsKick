@@ -113,7 +113,7 @@ h4 {
                         </div>
                         <ul class="nav navbar-nav navbar-right float-nav nav-algn_l">
                             <li><a href="about.html">About</a></li>
-                            <li><a href="contact.html">Contact</a></li>
+<!--                            <li><a href="contact.html">Contact</a></li>-->
                         </ul>
                         <div class="clearfix"></div>
                     </div><!-- /.navbar-collapse -->

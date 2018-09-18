@@ -75,14 +75,14 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav float-nav nav-algn_r">
                         <li><a href="index.php" class="active">Home</a></li>
-                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="gallery.html">Album</a></li>
                     </ul>
                     <div class="logo float-nav nav-algn_c">
                        <h1><a href="index.php">Sports Kick</a></h1>
                     </div>
                     <ul class="nav navbar-nav navbar-right float-nav nav-algn_l">
                           
-                          <li><a href="contact.html">Contact</a></li>
+<!--                          <li><a href="contact.html">Contact</a></li>-->
                         <li><a href="about.html">About</a></li>
                     </ul>
                     <div class="clearfix"></div>

@@ -47,7 +47,7 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav float-nav nav-algn_r">
                         <li><a href="index.php" class="active">Home</a></li>
-                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="gallery.html">Album</a></li>
                     </ul>
                     <div class="logo float-nav nav-algn_c">
                        <h1><a href="index.php">Sports Kick</a></h1>
