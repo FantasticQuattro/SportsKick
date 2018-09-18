@@ -19,7 +19,15 @@ if(isset($_GET["quickLink"])){
 else{
     $quickFilter = '';
 }
-
+if(isset($_POST['userLat']) && isset($_POST['userLng'])){
+    $userLat = $_POST['userLat'];
+    $userLng = $_POST['userLng'];
+    
+}
+else{
+    $userLat = '';
+    $userLng = '';
+}
 ?>
 
 <html>
@@ -186,19 +194,19 @@ h4 {
                     <br /><br />
                     <h4>Distance</h4>
                     <div class="list-group-item checkbox">
-                        <label><input type="checkbox" class="common_selector Distance" value=350> 5 KM Around Me</label>
+                        <label><input type="checkbox" class="common_selector Distance" value=5> 5 KM Around Me</label>
                     </div>
                     <div class="list-group-item checkbox">
-                        <label><input type="checkbox" class="common_selector Distance" value=600> 10 KM Around Me</label>
+                        <label><input type="checkbox" class="common_selector Distance" value=10> 10 KM Around Me</label>
                     </div>
                     <div class="list-group-item checkbox">
-                        <label><input type="checkbox" class="common_selector Distance" value=1200> 20 KM Around Me</label>
+                        <label><input type="checkbox" class="common_selector Distance" value=20> 20 KM Around Me</label>
                     </div>
                     <div class="list-group-item checkbox">
-                        <label><input type="checkbox" class="common_selector Distance" value=2000> 30 KM Around Me</label>
+                        <label><input type="checkbox" class="common_selector Distance" value=30> 30 KM Around Me</label>
                     </div>
                     <div class="list-group-item checkbox">
-                        <label><input type="checkbox" class="common_selector Distance" value=9000> All VIC</label>
+                        <label><input type="checkbox" class="common_selector Distance" value=50> All VIC</label>
                     </div>
                     <?php    
                     ?>
@@ -216,7 +224,8 @@ h4 {
                     </div>
                     <div style="overflow: hidden; padding-right: .5em;" class="col-md-5 col-sm-5">
                         <input type="text" class="form-control" style="width: 90%;" name="search_suburb" id="search_suburb" value="<?php echo $_POST['search_suburb']; ?>" autocomplete="off" placeholder="Enter the suburb name" />
-
+                        <input type = "hidden" name="userLat" id="latitude">
+                         <input type="hidden" name="userLng" id="longitude">
                     </div>
                     <div style="overflow: hidden; padding-right: .5em;" class="col-md-2 col-sm-5">
                         <input class="btn btn-default hd-more" style="float: right" type="submit" value="Search">
@@ -251,6 +260,14 @@ h4 {
                 source: 'suggestionSub.php'
             });
 
+            navigator.geolocation.getCurrentPosition(function(location) {
+            userLat = location.coords.latitude;
+            userLng = location.coords.longitude;
+                document.getElementById('latitude').value = userLat;
+                document.getElementById('longitude').value = userLng;
+                console.log(userLat+"\t"+userLng);
+                
+            });
             //add for totop button
             jQuery.goup();
 
@@ -265,7 +282,9 @@ h4 {
                 var suburbLocation = document.getElementById("search_suburb").value;
                 var searchText = document.getElementById("homesearch_category").value;
                 var quickLinks = '<?php echo $quickFilter; ?>';
-                console.log(Distance)
+                var userLat = '<?php echo $userLat; ?>';
+                var userLng = '<?php echo $userLng; ?>';
+                
                 $.ajax({
                     url: "fetch_data.php",
                     method: "POST",
@@ -276,7 +295,7 @@ h4 {
                         Distance: Distance,
                         SearchText: searchText,
                         suburbLocation: suburbLocation,
-                        quickLinks: quickLinks
+                        quickLinks: quickLinks, userLat: userLat, userLng: userLng
                     },
                     success: function(data) {
                         $('.filter_data').html(data);

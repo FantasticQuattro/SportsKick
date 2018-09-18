@@ -64,33 +64,40 @@ if(isset($_POST["action"]))
  
   }else
   {
-      $distance = 1000;
+      $distance = 15;
   }
- //add these 'if' because sometimes cookie not work, set default location: monash
-  if(!isset($_COOKIE['userLat'])){
-      $userLat = -37.877111;
-      setcookie("userLat",$userLat);
-  }
-  $current_lat = $_COOKIE['userLat'];
-  
-  if(!isset($_COOKIE['userLng'])){
-      $userLng = 145.043750;
-      setcookie("userLng",$userLng);
-  }
-  $current_lon = $_COOKIE['userLng'];
-  
-  $earths_radius = 6371;
-   
- $searchText = explode(' ',$_POST["SearchText"]);
- $query = "SELECT * FROM places WHERE Status =1 AND (Category LIKE '%".$searchText[0]."%' OR Name LIKE '%".$searchText[0]."%'  OR Type LIKE '%".$searchText[0]."%'";
+
+$searchText = explode(' ',$_POST["SearchText"]);
+ $query = "SELECT * FROM places WHERE Status =1 AND ((Category LIKE '%".$searchText[0]."%' OR Name LIKE '%".$searchText[0]."%'  OR Type LIKE '%".$searchText[0]."%')";
     for($i=1;$i<count($searchText); $i++){
     if(!empty($searchText[$i])){
-        $query.="OR Category LIKE '%".$searchText[$i]."%' OR Name LIKE '%".$searchText[$i]."%' OR Type LIKE '%".$searchText[$i]."%'";
+        $query.="OR (Category LIKE '%".$searchText[$i]."%' OR Name LIKE '%".$searchText[$i]."%' OR Type LIKE '%".$searchText[$i]."%')";
     }
 }
- $query.=") AND Type LIKE '%".$_POST['quickLinks']."%' AND Address LIKE '%".$_POST['suburbLocation']."%'";
- $query.= "AND acos(sin($current_lat) * sin(latitude) + cos($current_lat) * cos(latitude) * cos(longitude- ($current_lon))) * $earths_radius <= $distance ";
+    $query.=")";
     
+    if(isset($_POST['userLat']) && isset($_POST['userLng'])){
+        $current_lat = $_POST['userLat'];
+        $current_lon = $_POST['userLng'];
+        //echo "Inside set".$current_lat;
+    }
+    else{
+        $current_lat = '';
+        $current_lon = '';
+    }
+    if(isset($_POST['suburbLocation'])){
+        if($_POST['suburbLocation'] != ''){
+          $query.= "AND Address LIKE '%".$_POST['suburbLocation']."%'" ; 
+        } 
+    }
+    if(isset($_POST['quickLinks'])){
+        if($_POST['quickLinks']!=''){
+            $query.="AND Type LIKE '%".$_POST['quickLinks']."%'";
+        }
+        else{
+            $_POST['quickLinks']='';
+        }
+    }
  if(isset($_POST["Type"]))
  {
   $Type_filter = implode("','", $_POST["Type"]);
@@ -103,28 +110,12 @@ if(isset($_POST["action"]))
  }
     
   //add for distance radius
-  $query .= "ORDER BY acos(sin($current_lat) * sin(latitude) + cos($current_lat) * cos(latitude) * cos(longitude- ($current_lon))) * $earths_radius";
-
-    
-  getData($query);
-}
-    
-    //DISTANCE 2: calculate distance ; step 3.in the php loop
-    function getDistance($latitudeTo, $longitudeTo)
-    {
-    $latitudeFrom= $_COOKIE['userLat'];
-    $longitudeFrom=  $_COOKIE['userLng'];
-    $rad = M_PI / 180;
-    //Calculate distance from latitude and longitude
-    $theta = $longitudeFrom - $longitudeTo;
-    $dist = sin($latitudeFrom * $rad) * sin($latitudeTo * $rad) +  cos($latitudeFrom * $rad) * cos($latitudeTo * $rad) * cos($theta * $rad);
-    return number_format((float)(acos($dist) / $rad * 60 *  1.853), 2, '.', ''); 
-
+    if($current_lat!='' and $current_lon!=''){
+        $earths_radius = 6371;
+        $query .= "ORDER BY acos(sin($current_lat) * sin(latitude) + cos($current_lat) * cos(latitude) * cos(longitude- ($current_lon))) * $earths_radius"; 
     }
  
-    function getData($query)
-    {
-        
+    
         include('database_connection.php');
         $statement = $connect->prepare($query);
         $statement->execute();
@@ -154,7 +145,12 @@ if(isset($_POST["action"]))
     <?php
       foreach($result as $row)
       {
-       $distance = getDistance($row['Latitude'],$row['Longitude']);
+       $distancePlace = getDistance($row['Latitude'],$row['Longitude'], $current_lat, $current_lon);
+//          echo $distancePlace;
+          //echo "Current Lat ".$current_lat;
+          if($current_lat != '' and $current_lon != ''){
+              
+              if($_POST['suburbLocation']!='' or $_POST["SearchText"]!=''){
        $output .= '   
        <div class="col-md-6 col-md-6">
         <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:450px;">
@@ -167,7 +163,7 @@ if(isset($_POST["action"]))
          <b>Address :</b> <br />'. $row['Address'] .'<br /><br />
          
          <b>Distance :</b> <br /> 
-          <font color="green">'. $distance .' KM </font>
+          <font color="green">'. $distancePlace .' KM </font>
          <br /><br />
 
          <form method="post" action="detailPage.php">
@@ -191,7 +187,77 @@ if(isset($_POST["action"]))
        ';   
 
       }
+              else if($distancePlace<=$distance){
+                  $output .= '   
+       <div class="col-md-6 col-md-6">
+        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:450px;">
+
+         <h4 align="center" style="color:MediumSeaGreen;"><strong>'. $row['Name'] .'</strong></h4>
+       
+         <p>
+         <b>Type :</b> <br />'. $row['Type'] .' <br /><br />
+         <b>Category :</b> <br />'. $row['Category'] .' <br /><br />
+         <b>Address :</b> <br />'. $row['Address'] .'<br /><br />
+         
+         <b>Distance :</b> <br /> 
+          <font color="green">'. $distancePlace .' KM </font>
+         <br /><br />
+
+         <form method="post" action="detailPage.php">
+         <input type="hidden" name="Type" value="'. $row['Type'] .'">
+         <input type="hidden" name="Category" value="'. $row['Category'] .'" >
+         <input type="hidden" name="Address" value="'. $row['Address'] .'">
+         <input type="hidden" name="Name" value="'. $row['Name'] .'">
+         <input type="hidden" name="longitude" value="'. $row['Longitude'] .'">
+         <input type="hidden" name="latitude" value="'. $row['Latitude'] .'">
+         <input type="hidden" name="ID" value="'. $row['ID'] .'">
+         <input type="hidden" name="localPhNum" value="'.$row['Local_Phone_Number'].'">
+         <input type="hidden" name="internationalPhNum" value="'.$row['International_Phone_Number'].'">
+         <input type="hidden" name="website" value="'.$row['Website'].'">
+         <b><center><input type="submit" class="button" value= "More Details"></center></b>
+         </form>
+
+         </p>
+
+        </div>
+       </div>
+       ';  
      }
+          }
+          else {
+              $output .= '   
+       <div class="col-md-6 col-md-6">
+        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:450px;">
+
+         <h4 align="center" style="color:MediumSeaGreen;"><strong>'. $row['Name'] .'</strong></h4>
+       
+         <p>
+         <b>Type :</b> <br />'. $row['Type'] .' <br /><br />
+         <b>Category :</b> <br />'. $row['Category'] .' <br /><br />
+         <b>Address :</b> <br />'. $row['Address'] .'<br /><br />
+         
+       
+         <form method="post" action="detailPage.php">
+         <input type="hidden" name="Type" value="'. $row['Type'] .'">
+         <input type="hidden" name="Category" value="'. $row['Category'] .'" >
+         <input type="hidden" name="Address" value="'. $row['Address'] .'">
+         <input type="hidden" name="Name" value="'. $row['Name'] .'">
+         <input type="hidden" name="longitude" value="'. $row['Longitude'] .'">
+         <input type="hidden" name="latitude" value="'. $row['Latitude'] .'">
+         <input type="hidden" name="ID" value="'. $row['ID'] .'">
+         <input type="hidden" name="localPhNum" value="'.$row['Local_Phone_Number'].'">
+         <input type="hidden" name="internationalPhNum" value="'.$row['International_Phone_Number'].'">
+         <input type="hidden" name="website" value="'.$row['Website'].'">
+         <b><center><input type="submit" class="button" value= "More Details"></center></b>
+         </form>
+
+         </p>
+
+        </div>
+       </div>
+       ';  
+          }
+      }}
      else
      {
       $output = '<br/><br/><center><h4>No Places Found. Please Extend Scope!</h4></center>';
@@ -200,7 +266,20 @@ if(isset($_POST["action"]))
 
     }
 
+    function getDistance($current_lat, $current_lon,$latitudeTo, $longitudeTo, $earthRadius = 6371)
+    {
     
+        $latFrom= deg2rad((double)$current_lat);
+    $lonFrom= deg2rad((double)$current_lon);
+    $latTo = deg2rad((double)$latitudeTo);
+        $lonTo = deg2rad((double)$longitudeTo);
+        $latDelta = $latTo - $latFrom;
+  $lonDelta = $lonTo - $lonFrom;
+
+  $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+    cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+    return round($angle * $earthRadius,3);
+    }
 ?> 
 </html>
 

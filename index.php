@@ -42,7 +42,15 @@
                 
                 //add for totop button
 //   jQuery.goup();
-
+navigator.geolocation.getCurrentPosition(function(location) {
+         userLat = location.coords.latitude;
+         userLng = location.coords.longitude;
+       if(userLat != '' && userLng != ''){
+         console.log(userLat+" "+userLng);
+         document.getElementById('latitude').value = userLat;
+         document.getElementById('longitude').value = userLng;
+       }
+   });
     filter_data();
 
     function filter_data()
@@ -132,12 +140,14 @@
                             
                         <!--     search box      -->
                      <form method="post" action="tlisting.php">
+                        
                          <input type="text" id="homesearch_category" name="homesearch_category" class="form-control" placeholder="Search for sport centres, gyms and parks" style="width:38%;" autocomplete="off"/>  
     
                          <br />  
                          <input type="text" id="search_suburb" name="search_suburb" class="form-control" placeholder="Enter the suburb you are looking for" style="width:38%;" autocomplete="off"/ >  
                          <br />  
-                         
+                         <input type = "hidden" name="userLat" id="latitude">
+                         <input type="hidden" name="userLng" id="longitude">
                             
                             <input class="btn btn-default cont-btn" type="submit" value="Start your journey">
                             <br /><br /> 
