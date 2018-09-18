@@ -21,6 +21,7 @@
 .button:hover {
     color: #20bf6b !important;
     border-radius: 15px;
+    border-bottom: 15px;
     border-color: #20bf6b !important;
     transition: all 0.3s ease 0s;
     }
@@ -153,7 +154,7 @@ $searchText = explode(' ',$_POST["SearchText"]);
               if($_POST['suburbLocation']!='' or $_POST["SearchText"]!=''){
        $output .= '   
        <div class="col-md-6 col-md-6">
-        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:450px;">
+        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:430px;">
 
          <h4 align="center" style="color:MediumSeaGreen;"><strong>'. $row['Name'] .'</strong></h4>
        
@@ -190,7 +191,7 @@ $searchText = explode(' ',$_POST["SearchText"]);
               else if($distancePlace<=$distance){
                   $output .= '   
        <div class="col-md-6 col-md-6">
-        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:450px;">
+        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:430px;">
 
          <h4 align="center" style="color:MediumSeaGreen;"><strong>'. $row['Name'] .'</strong></h4>
        
@@ -227,7 +228,7 @@ $searchText = explode(' ',$_POST["SearchText"]);
           else {
               $output .= '   
        <div class="col-md-6 col-md-6">
-        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:450px;">
+        <div style="border:1px solid #ff7f3b; border-radius:5px; padding:16px; margin-bottom:16px; height:430px;">
 
          <h4 align="center" style="color:MediumSeaGreen;"><strong>'. $row['Name'] .'</strong></h4>
        
